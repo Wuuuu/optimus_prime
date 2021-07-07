@@ -1,12 +1,13 @@
 import { defineConfig } from 'umi';
 
 export default defineConfig({
-  title: 'optimus prime',
-  favicon: '/public/favicon.png',
   nodeModulesTransform: {
     type: 'none',
   },
-  layout: {},
+  layout: {
+    name: '配置系统',
+    locale: false,
+  },
   routes: [{ path: '/', component: '@/pages/index' }],
   fastRefresh: {},
 });
