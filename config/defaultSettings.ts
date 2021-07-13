@@ -12,7 +12,7 @@ const Settings: LayoutSettings & {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: '擎天柱',
+  title: 'Optimus Prime',
   pwa: false,
   logo: 'https://z3.ax1x.com/2021/07/09/RvE1FU.jpg',
   iconfontUrl: '',

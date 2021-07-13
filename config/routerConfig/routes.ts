@@ -31,6 +31,14 @@
       hideNav: true,
       hideFooter: true,
     },
+    routes: [
+      {
+        path: '/toolBar/make-up',
+        name: '制作页面',
+        icon: 'smile',
+        component: './toolBar',
+      },
+    ],
   },
   {
     path: '/admin',

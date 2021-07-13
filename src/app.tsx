@@ -66,24 +66,6 @@ export async function getInitialState(): Promise<{
     502: '网关错误。',
     503: '服务不可用，服务器暂时过载或维护。',
     504: '网关超时。',
- //-----English
-    200: The server successfully returned the requested data. ',
-    201: New or modified data is successful. ',
-    202: A request has entered the background queue (asynchronous task). ',
-    204: Data deleted successfully. ',
-    400: 'There was an error in the request sent, and the server did not create or modify data. ',
-    401: The user does not have permission (token, username, password error). ',
-    403: The user is authorized, but access is forbidden. ',
-    404: The request sent was for a record that did not exist. ',
-    405: The request method is not allowed. ',
-    406: The requested format is not available. ',
-    410':
-        'The requested resource is permanently deleted and will no longer be available. ',
-    422: When creating an object, a validation error occurred. ',
-    500: An error occurred on the server, please check the server. ',
-    502: Gateway error. ',
-    503: The service is unavailable. ',
-    504: The gateway timed out. ',
  * @see https://beta-pro.ant.design/docs/request-cn
  */
 export const request: RequestConfig = {
@@ -105,9 +87,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   return {
     // rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    waterMarkProps: {
-      content: initialState?.currentUser?.name,
-    },
+    // waterMarkProps: {
+    //   content: initialState?.currentUser?.name,
+    // },
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;

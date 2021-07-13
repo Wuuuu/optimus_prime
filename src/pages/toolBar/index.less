@@ -1,8 +1,37 @@
 @import '~antd/lib/style/themes/default.less';
 
-.pre {
-  margin: 12px 0;
-  padding: 12px 20px;
-  background: @input-bg;
-  box-shadow: @card-shadow;
+.layoutSlide() {
+  position: fixed;
+  flex: 0 0 360px;
+  width: 360px;
+  height: 100vh;
+  overflow: auto;
+  background-color: @white;
+  z-index: 999;
+}
+
+.toolProLayoutContainer {
+  position: relative;
+  padding-top: 48px;
+  :global {
+    .ant-pro-page-container-children-content {
+      margin: 0;
+    }
+    .ant-pro-page-container-children-content;
+  }
+  .toolMaterialArea {
+    left: 0;
+    .layoutSlide;
+  }
+  .toolDrawBoardArea {
+    position: absolute;
+    width: 100%;
+    min-height: calc(100vh 0 48px);
+    height: 100%;
+    background-color: #eef2f8;
+  }
+  .toolConfigArea {
+    right: 0;
+    .layoutSlide;
+  }
 }

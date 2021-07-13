@@ -1,63 +1,87 @@
-import React from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Alert, Typography } from 'antd';
-import { useIntl, FormattedMessage } from 'umi';
+import React, { useState, lazy, Suspense } from 'react';
+import { Button, Skeleton, Input } from 'antd';
+// import { CrownOutlined, UserOutlined, SmileOutlined } from '@ant-design/icons';
+import ProLayout, { PageContainer } from '@ant-design/pro-layout';
+
 import styles from './index.less';
 
-const CodePreview: React.FC = ({ children }) => (
-  <pre className={styles.pre}>
-    <code>
-      <Typography.Text copyable>{children}</Typography.Text>
-    </code>
-  </pre>
-);
+const DrawBoard = lazy(() => import('./components/DrawBoard'));
+const ToolMateria = lazy(() => import('./components/ToolMateria'));
+const ToolPropertiesPane = lazy(() => import('./components/ToolPropertiesPane'));
 
-export default (): React.ReactNode => {
-  const intl = useIntl();
+const ToolPage: React.FC<{}> = () => {
+  const [pathname, setPathname] = useState('/welcome');
   return (
-    <PageContainer>
-      <Card>
-        <Alert
-          message={intl.formatMessage({
-            id: 'pages.welcome.alertMessage',
-            defaultMessage: 'Faster and stronger heavy-duty components have been released.',
-          })}
-          type="success"
-          showIcon
-          banner
-          style={{
-            margin: -12,
-            marginBottom: 24,
+    <>
+      <ProLayout
+        pure
+        location={{
+          pathname,
+        }}
+        title="返回"
+        navTheme="light"
+        fixSiderbar
+        headerRender={false}
+        // rightContentRender={() => (
+        //   <div>
+        //     <Avatar shape="square" size="small" icon={<UserOutlined />} />
+        //   </div>
+        // )}
+      >
+        <PageContainer
+          onBack={() => {
+            window.history.go(-1);
           }}
-        />
-        <Typography.Text strong>
-          <FormattedMessage id="pages.welcome.advancedComponent" defaultMessage="Advanced Form" />{' '}
-          <a
-            href="https://procomponents.ant.design/components/table"
-            rel="noopener noreferrer"
-            target="__blank"
-          >
-            <FormattedMessage id="pages.welcome.link" defaultMessage="Welcome" />
-          </a>
-        </Typography.Text>
-        <CodePreview>yarn add @ant-design/pro-table</CodePreview>
-        <Typography.Text
-          strong
-          style={{
-            marginBottom: 12,
+          className={styles.toolProLayoutContainer}
+          header={{
+            style: {
+              padding: '4px 16px',
+              position: 'fixed',
+              top: 0,
+              width: '100%',
+              left: 0,
+              zIndex: 999,
+              boxShadow: '0 2px 8px #f0f1f2',
+            },
           }}
+          extra={[
+            <Input.Search
+              key="search"
+              style={{
+                width: 240,
+              }}
+            />,
+            <Button key="3">操作一</Button>,
+            <Button key="2" type="primary">
+              操作一
+            </Button>,
+          ]}
         >
-          <FormattedMessage id="pages.welcome.advancedLayout" defaultMessage="Advanced layout" />{' '}
-          <a
-            href="https://procomponents.ant.design/components/layout"
-            rel="noopener noreferrer"
-            target="__blank"
+          <div
+            style={{
+              height: 'calc(100vh-48px)',
+            }}
           >
-            <FormattedMessage id="pages.welcome.link" defaultMessage="Welcome" />
-          </a>
-        </Typography.Text>
-        <CodePreview>yarn add @ant-design/pro-layout</CodePreview>
-      </Card>
-    </PageContainer>
+            <div className={styles.toolMaterialArea}>
+              <Suspense fallback={<Skeleton />}>
+                <ToolMateria />
+              </Suspense>
+            </div>
+            <div className={styles.toolDrawBoardArea}>
+              <Suspense fallback={<Skeleton />}>
+                <DrawBoard />
+              </Suspense>
+            </div>
+            <div className={styles.toolConfigArea}>
+              <Suspense fallback={<Skeleton />}>
+                <ToolPropertiesPane />
+              </Suspense>
+            </div>
+          </div>
+        </PageContainer>
+      </ProLayout>
+    </>
   );
 };
+
+export default ToolPage;
