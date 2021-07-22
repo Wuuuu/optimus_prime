@@ -8,24 +8,24 @@ export const MOBILE_DEVICE_MODEL_LIST = [
     },
   },
   {
-    key: 'Iphone6/7/8',
-    label: 'Iphone6/7/8',
+    key: 'iPhone6/7/8',
+    label: 'iPhone6/7/8',
     size: {
       w: 375,
       h: 677,
     },
   },
   {
-    key: 'Iphone6/7/8 Plus',
-    label: 'Iphone6/7/8 Plus',
+    key: 'iPhone6/7/8 Plus',
+    label: 'iPhone6/7/8 Plus',
     size: {
       w: 414,
       h: 736,
     },
   },
   {
-    key: 'Iphone X',
-    label: 'Iphone X',
+    key: 'iPhone X',
+    label: 'iPhone X',
     size: {
       w: 375,
       h: 812,
