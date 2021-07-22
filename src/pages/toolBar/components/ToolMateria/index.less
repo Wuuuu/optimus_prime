@@ -1,7 +1,7 @@
 @import '~antd/lib/style/themes/default.less';
 
 .toolMateriaContainer {
-  :global{
+  :global {
     .ant-tabs-content-holder {
       border-left: none;
     }
@@ -18,9 +18,33 @@
     .ant-tabs-ink-bar {
       display: none;
     }
+    .ant-tabs-tabpane {
+      padding-left: 0 !important;
+    }
   }
 }
 
+.complexComponentsBox {
+  display: flex;
+  margin-top: 24px;
+  &:hover {
+    cursor: grab;
+  }
+  .complexComponentsItem {
+    width: 200px;
+    height: 200px;
+    padding: 6px;
+    border: 1px solid @white;
+    border-radius: 8px;
+    transition: 0.3s all;
+    &:hover {
+      border: 1px solid @primary-color;
+    }
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
 .customTabBox {
   & > img {
     display: block;

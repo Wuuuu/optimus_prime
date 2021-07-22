@@ -14,14 +14,14 @@ interface DeviceModelList {
   };
 }
 
-interface DrawBoardSizeFProps {
+interface DrawBoardSizeProps {
   deviceList: DeviceModelList[];
   canvasSize: { w: number; h: number };
   onChange: (e: string, type: string) => void;
   onSelectChange: (value: string) => void;
 }
 
-const DrawBoardSize: React.FC<DrawBoardSizeFProps> = ({
+const DrawBoardSize: React.FC<DrawBoardSizeProps> = ({
   deviceList,
   canvasSize,
   onChange,
@@ -44,12 +44,14 @@ const DrawBoardSize: React.FC<DrawBoardSizeFProps> = ({
   return (
     <div className={styles.drawBoardChangeSizeWrapper}>
       <Select
-        defaultValue="Iphone6/7/8"
+        defaultValue="iPhone6/7/8"
         onChange={handleSelectChange}
         style={{ width: 140, marginRight: 16 }}
       >
         {deviceList.map((item: DeviceModelList) => (
-          <Option value={item?.key}>{item.label}</Option>
+          <Option value={item?.key} key={item?.key}>
+            {item.label}
+          </Option>
         ))}
       </Select>
       <Input

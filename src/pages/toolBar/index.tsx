@@ -10,13 +10,13 @@ const ToolMateria = lazy(() => import('./components/ToolMateria'));
 const ToolPropertiesPane = lazy(() => import('./components/ToolPropertiesPane'));
 
 const ToolPage: React.FC<{}> = () => {
-  const [pathname, setPathname] = useState('/welcome');
+  // const [pathname, setPathname] = useState('/welcome');
   return (
     <>
       <ProLayout
         pure
         location={{
-          pathname,
+          pathname: '/welcome',
         }}
         title="返回"
         navTheme="light"
