@@ -89,7 +89,7 @@ const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
 
   // 取消选中画布中的组件
   const deselectCurComponent = (e: React.MouseEvent) => {
-    console.log('deselectCurComponent', isClickComponent);
+    e.stopPropagation();
     if (!isClickComponent) {
       dispatch({
         type: 'toolBarEditData/setCurComponent',
