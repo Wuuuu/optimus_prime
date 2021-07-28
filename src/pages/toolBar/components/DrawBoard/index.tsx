@@ -1,31 +1,31 @@
-import React, { lazy, Suspense, useState, DragEvent } from 'react';
-import type { ConnectRC, Dispatch } from 'umi';
-import { connect } from 'umi';
+import React, { lazy, Suspense, useState } from 'react';
+import { connect, ConnectRC, Dispatch } from 'umi';
 import { Skeleton } from 'antd';
+import { RouteChildrenProps } from 'react-router';
 import produce from 'immer';
 import _cloneDeep from 'lodash/cloneDeep';
 import { uuid } from '@/utils/utils';
-import { IMGS_COMPONENTS_LIST } from '@/edit-components';
+import IMGS_COMPONENTS_LIST from '@/edit-components';
 import { MOBILE_DEVICE_MODEL_LIST } from './constant';
-import type { ToolBarEditState } from '../../data';
+import { ToolBarEditState } from '../../data';
+import { getStyle } from '../../utils';
 
 import styles from './index.less';
 
 const DrawBoardSize = lazy(() => import('./components/DrawBoardSize'));
 const BackgroundGrid = lazy(() => import('./components/BackgroundGrid'));
+const ShapeWrapper = lazy(() => import('./components/ShapeWrapper'));
 
-export interface DrawBoardProps {
+export interface DrawBoardProps extends RouteChildrenProps {
   toolBarEditData: ToolBarEditState;
   dispatch: Dispatch;
   loading: boolean;
 }
 
 const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
-  const {
-    dispatch,
-    toolBarEditData: { componentData },
-  } = props;
-  console.log('🚀 ~ file: index.tsx ~ line 27 ~ componentData', componentData);
+  const { dispatch, toolBarEditData } = props;
+  const { componentData, isClickComponent, curComponent } = toolBarEditData;
+  console.log('🚀 ~ file: index.tsx ~ line 27 ~ componentData', toolBarEditData);
   const [canvasSize, setCanvasSize] = useState<{ w: number; h: number }>({ w: 375, h: 667 });
 
   const handleChange = (value: string, type: string) => {
@@ -46,45 +46,73 @@ const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
     setCanvasSize(currDeviceSize.size);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLInputElement>) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('-----', e);
     const complexid = e.dataTransfer.getData('complexid');
     const currComponent = _cloneDeep(
       IMGS_COMPONENTS_LIST.find((item) => item.complexid === complexid),
     );
-    console.log('handleDrop---complexid', currComponent);
+
     if (!currComponent) return;
     currComponent.style = {
       ...currComponent.style,
-      top: 0,
-      left: 0,
+      // top: 0,
+      // left: 0,
+      top: e.nativeEvent.offsetY - 110,
+      left: e.nativeEvent.offsetX - 59,
     };
     dispatch({
       type: 'toolBarEditData/updateComponetData',
-      payload: { ...currComponent, uuid },
+      payload: { ...currComponent, uuid: uuid() },
     });
     // e.target.appendChild(document.getElementById(data));
-    // setComponentList((list) => [currComponent?.component({}), ...list]);
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLInputElement>) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
   };
 
   // 选中画布中的组件
-  const handleMouseDown = () => {};
+  const handleMouseDown = () => {
+    dispatch({
+      type: 'toolBarEditData/setClickComponentStatus',
+      payload: false,
+    });
+    console.log('handleMouseDown');
+  };
 
-  // 取消选中布中的组件
-  const deselectCurComponent = () => {};
+  const getComponentStyle = (style: React.CSSProperties) => {
+    return getStyle(style, ['top', 'left', 'rotate']);
+  };
+
+  // 取消选中画布中的组件
+  const deselectCurComponent = (e: React.MouseEvent) => {
+    console.log('deselectCurComponent', isClickComponent);
+    if (!isClickComponent) {
+      dispatch({
+        type: 'toolBarEditData/setCurComponent',
+        payload: null,
+      });
+    }
+
+    // 0 左击 1 滚轮 2 右击
+    // if (e.button != 2) {
+    // }
+    console.log('handleMouseUp');
+  };
 
   const handleContextMenu = (e: React.DragEvent<HTMLInputElement>) => {
     e.stopPropagation();
     e.preventDefault();
   };
-  const handleComplexMouseDown = () => {};
+
+  const handleComplexMouseDown = (e: React.MouseEvent) => {
+    if (!curComponent) {
+      e.preventDefault();
+    }
+  };
   const drawBoardSizeProps = {
     deviceList: MOBILE_DEVICE_MODEL_LIST,
     canvasSize,
@@ -98,40 +126,45 @@ const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
   };
 
   return (
-    <div className={styles.drawBoardContainer}>
+    <div
+      className={styles.drawBoardContainer}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onMouseDown={handleMouseDown}
+      onMouseUp={deselectCurComponent}
+    >
       <Suspense fallback={<Skeleton.Button active size="default" shape="round" />}>
         <DrawBoardSize {...drawBoardSizeProps} />
       </Suspense>
       <div className={styles.drawBoardWrapper} style={canvasStyle}>
-        <div>
-          <BackgroundGrid />
-          <div
-            className={styles.drawBoardCard}
-            style={canvasStyle}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onMouseDown={handleMouseDown}
-            onMouseUp={deselectCurComponent}
-          >
-            {Array.isArray(componentData) &&
-              componentData.map((item) => {
-                const DynamicComponent = lazy(
-                  () => import(`../../../../edit-components/${item.component}/index.tsx`),
-                );
-                return (
-                  <Suspense fallback="loading~">
-                    <div
-                      style={{ ...item?.style }}
-                      className={styles.complexComponentsWrapper}
-                      onContextMenu={handleContextMenu}
-                      onMouseDown={handleComplexMouseDown}
-                    >
-                      <DynamicComponent {...item} />
-                    </div>
-                  </Suspense>
-                );
-              })}
-          </div>
+        <BackgroundGrid />
+        <div className={styles.drawBoardCard}>
+          {Array.isArray(componentData) &&
+            componentData.map((item, index) => {
+              const DynamicComponent = lazy(
+                () => import(`../../../../edit-components/${item.component}/index.tsx`),
+              );
+              const shapeWrapperProps = {
+                index,
+                active: index === curComponent?.index,
+                defaultStyle: item.style,
+                element: item,
+                curComponent,
+              };
+              return (
+                <ShapeWrapper {...shapeWrapperProps}>
+                  <div
+                    style={getComponentStyle(item?.style)}
+                    // style={{ ...item.style }}
+                    className={styles.complexComponentsWrapper}
+                    onContextMenu={handleContextMenu}
+                    onMouseDown={handleComplexMouseDown}
+                  >
+                    <DynamicComponent {...item} />
+                  </div>
+                </ShapeWrapper>
+              );
+            })}
         </div>
       </div>
     </div>

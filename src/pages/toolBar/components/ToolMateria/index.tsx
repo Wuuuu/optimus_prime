@@ -2,7 +2,7 @@ import type { DragEvent} from 'react';
 import React, { lazy, Suspense } from 'react';
 import { Tabs } from 'antd';
 import type { TabItem } from './data.d';
-import { IMGS_COMPONENTS_LIST } from '@/edit-components';
+import  IMGS_COMPONENTS_LIST from '@/edit-components';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
@@ -48,11 +48,11 @@ const ToolMateria: React.FC<{}> = () => {
   const handleComplexDragStart = (e: React.DragEvent<HTMLInputElement>) => {
     const { complexid } = (e.target as HTMLInputElement).dataset;
     e.dataTransfer.setData('complexid', complexid || '');
-    console.log('拖拽开始', e);
+    // console.log('拖拽开始', e);
   };
 
   const handleDragEnd = (e: DragEvent) => {
-    console.log('拖拽结束', e);
+    // console.log('拖拽结束', e);
   };
 
   return (
@@ -74,9 +74,7 @@ const ToolMateria: React.FC<{}> = () => {
                 };
                 return (
                   <div className={styles.complexComponentsItem} draggable>
-                    <Suspense fallback="loading~">
-                      <DynamicComponent {...dynameicProps} />
-                    </Suspense>
+                    <DynamicComponent {...dynameicProps} />
                   </div>
                 );
               })}

@@ -1,6 +1,4 @@
 import type { FC } from 'react';
-import React from 'react';
-
 interface ImgsProps {
   complexid: string;
   propValue?: string;
@@ -8,11 +6,10 @@ interface ImgsProps {
 }
 const ImgComponent: FC<ImgsProps> = (props) => {
   const { complexid, propValue } = props;
-  // console.log('🚀 ~ file: index.tsx ~ line 4 ~ props', props);
   return (
     <img
       data-complexid={complexid}
-      style={{ width: '100%', height: '100%' }}
+      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
       src={propValue}
       alt=""
     />
