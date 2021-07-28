@@ -3,7 +3,7 @@ import { CSSProperties } from 'react';
 export interface ToolBarEditState {
   componentData: componentDataProps[];
   isClickComponent: boolean;
-  curComponent: componentDataProps;
+  curComponent: componentDataProps | null;
   curComponentIndex: object | null;
 }
 
@@ -15,4 +15,5 @@ export interface componentDataProps {
   propValue: any;
   style: CSSProperties;
   index?: string | number;
+  uuid?: string; 
 }

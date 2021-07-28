@@ -25,7 +25,7 @@ export interface DrawBoardProps extends RouteChildrenProps {
 const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
   const { dispatch, toolBarEditData } = props;
   const { componentData, isClickComponent, curComponent } = toolBarEditData;
-  console.log('🚀 ~ file: index.tsx ~ line 27 ~ componentData', toolBarEditData);
+  console.log("🚀 toolBarEditData", toolBarEditData)
   const [canvasSize, setCanvasSize] = useState<{ w: number; h: number }>({ w: 375, h: 667 });
 
   const handleChange = (value: string, type: string) => {
@@ -89,7 +89,7 @@ const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
 
   // 取消选中画布中的组件
   const deselectCurComponent = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    console.log('取消选中画布中的组件');
     if (!isClickComponent) {
       dispatch({
         type: 'toolBarEditData/setCurComponent',
@@ -100,7 +100,6 @@ const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
     // 0 左击 1 滚轮 2 右击
     // if (e.button != 2) {
     // }
-    console.log('handleMouseUp');
   };
 
   const handleContextMenu = (e: React.DragEvent<HTMLInputElement>) => {
@@ -138,7 +137,11 @@ const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
       </Suspense>
       <div className={styles.drawBoardWrapper} style={canvasStyle}>
         <BackgroundGrid />
-        <div className={styles.drawBoardCard}>
+        <div
+          className={styles.drawBoardCard}
+          onContextMenu={handleContextMenu}
+          onMouseDown={handleComplexMouseDown}
+        >
           {Array.isArray(componentData) &&
             componentData.map((item, index) => {
               const DynamicComponent = lazy(
@@ -146,6 +149,7 @@ const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
               );
               const shapeWrapperProps = {
                 index,
+                dispatch,
                 active: index === curComponent?.index,
                 defaultStyle: item.style,
                 element: item,
@@ -157,10 +161,10 @@ const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
                     style={getComponentStyle(item?.style)}
                     // style={{ ...item.style }}
                     className={styles.complexComponentsWrapper}
-                    onContextMenu={handleContextMenu}
-                    onMouseDown={handleComplexMouseDown}
                   >
-                    <DynamicComponent {...item} />
+                    <Suspense fallback={null}>
+                      <DynamicComponent {...item} />
+                    </Suspense>
                   </div>
                 </ShapeWrapper>
               );
@@ -171,17 +175,6 @@ const DrawBoard: ConnectRC<DrawBoardProps> = (props) => {
   );
 };
 
-export default connect(
-  ({
-    toolBarEditData,
-    loading,
-  }: {
-    toolBarEditData: ToolBarEditState;
-    loading: {
-      models: Record<string, boolean>;
-    };
-  }) => ({
-    toolBarEditData,
-    loading: loading.models.toolBarEdit,
-  }),
-)(DrawBoard);
+export default connect(({ toolBarEditData }: { toolBarEditData: ToolBarEditState }) => ({
+  toolBarEditData,
+}))(DrawBoard);

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { connect, ConnectRC, Dispatch } from 'umi';
+import { Dispatch } from 'umi';
 import { RedoOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 // import { throttle } from 'lodash/throttle';
 import { POINT_PLACEMENT, INIT_ANGLE, ANGLE_2_CURSOR } from '../../constant';
 import { mod360 } from '../../../../utils';
-import { ToolBarEditState } from '../../../../data';
+import { ToolBarEditState, componentDataProps } from '../../../../data';
 import styles from './index.less';
 
 interface ShapeWrapperProps {
@@ -14,28 +14,30 @@ interface ShapeWrapperProps {
   active: boolean;
   element: object;
   defaultStyle: any;
+  curComponent: componentDataProps;
   toolBarEditData: ToolBarEditState;
   children: React.ReactNode;
 }
 
-const ShapeWrapper: ConnectRC<ShapeWrapperProps> = ({
+const ShapeWrapper: React.FC<ShapeWrapperProps> = ({
   dispatch,
   index,
   active,
   element,
-  defaultStyle,
+  defaultStyle = {},
   children,
-  toolBarEditData,
+  curComponent,
 }) => {
-  const { curComponent } = toolBarEditData;
-  console.log('🚀 ~ file: index.tsx ~ line 30 ~ curComponent', curComponent);
+  console.log('🚀测试curComponent', curComponent?.style?.top, curComponent?.style?.left);
   const cursors = useRef({});
+
   const handleSelectCurComponent = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
   };
 
   const handleMouseDownOnShape = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     dispatch({
       type: 'toolBarEditData/setClickComponentStatus',
@@ -49,8 +51,8 @@ const ShapeWrapper: ConnectRC<ShapeWrapperProps> = ({
     cursors.current = getCursor() || {}; // 根据旋转角度获取光标位置
 
     const pos = { ...defaultStyle };
-    const startY = e.clientY;
-    const startX = e.clientX;
+    const startY = e.nativeEvent.clientY;
+    const startX = e.nativeEvent.clientX;
     // 如果直接修改属性，值的类型会变为字符串，所以要转为数值型
     const startTop = Number(pos.top);
     const startLeft = Number(pos.left);
@@ -58,17 +60,21 @@ const ShapeWrapper: ConnectRC<ShapeWrapperProps> = ({
     // 如果元素没有移动，则不保存快照
     let hasMove = false;
     const move = (moveEvent: MouseEvent) => {
-      console.log('move');
       hasMove = true;
       const curX = moveEvent.clientX;
       const curY = moveEvent.clientY;
       pos.top = curY - startY + startTop;
       pos.left = curX - startX + startLeft;
-
-      console.log('pos', pos);
-      
       // 修改当前组件样式
       // this.$store.commit('setShapeStyle', pos)
+      dispatch({
+        type: 'toolBarEditData/updateData',
+        payload: pos,
+      });
+      // dispatch({
+      //   type: 'toolBarEditData/updateCurComponent',
+      //   payload: pos,
+      // });
       // 等更新完当前组件的样式并绘制到屏幕后再判断是否需要吸附
       // 如果不使用 $nextTick，吸附后将无法移动
       // this.$nextTick(() => {
@@ -81,10 +87,15 @@ const ShapeWrapper: ConnectRC<ShapeWrapperProps> = ({
     };
 
     const up = () => {
-      console.log('up');
       // hasMove && this.$store.commit('recordSnapshot')
       // 触发元素停止移动事件，用于隐藏标线
       // eventBus.$emit('unmove')
+      // dispatch({
+      //   type: 'toolBarEditData/updateComponetData',
+      //   payload: pos,
+      // });
+      console.log('up-up-up-up-up');
+
       document.removeEventListener('mousemove', move);
       document.removeEventListener('mouseup', up);
     };
@@ -175,10 +186,11 @@ const ShapeWrapper: ConnectRC<ShapeWrapperProps> = ({
     [styles.shapeContainerActive]: active,
   });
 
+  console.log('defaultStyle', defaultStyle);
   return (
     <div
       className={shapeStyle}
-      style={{ top: defaultStyle.top || 0, left: defaultStyle.left || 0 }}
+      style={{ ...defaultStyle }}
       onClick={handleSelectCurComponent}
       onMouseDown={handleMouseDownOnShape}
     >
@@ -200,6 +212,4 @@ const ShapeWrapper: ConnectRC<ShapeWrapperProps> = ({
   );
 };
 
-export default connect(({ toolBarEditData }: { toolBarEditData: ToolBarEditState }) => ({
-  toolBarEditData,
-}))(ShapeWrapper);
+export default ShapeWrapper;
