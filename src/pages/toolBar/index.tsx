@@ -68,7 +68,7 @@ const ToolPage: React.FC<{}> = () => {
               </Suspense>
             </div>
             <div className={styles.toolDrawBoardArea}>
-              <Suspense fallback={<Skeleton />}>
+              <Suspense fallback={'loading'}>
                 <DrawBoard />
               </Suspense>
             </div>

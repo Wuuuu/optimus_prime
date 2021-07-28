@@ -26,12 +26,13 @@
 
 .complexComponentsBox {
   display: flex;
+  flex-wrap: wrap;
   margin-top: 24px;
   &:hover {
     cursor: grab;
   }
   .complexComponentsItem {
-    width: 200px;
+    flex: 0 0 50%;
     height: 200px;
     padding: 6px;
     border: 1px solid @white;

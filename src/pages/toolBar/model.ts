@@ -8,6 +8,8 @@ export interface ModelType {
   state: ToolBarEditState;
   effects: {
     updateComponetData: Effect;
+    setClickComponentStatus: Effect;
+    setCurComponent: Effect;
   };
   reducers: {
     save: Reducer<ToolBarEditState>;
@@ -16,6 +18,9 @@ export interface ModelType {
 
 const initState = {
   componentData: [],
+  curComponent: null,
+  curComponentIndex: null,
+  isClickComponent: false,
 };
 
 const Model: ModelType = {
@@ -26,9 +31,10 @@ const Model: ModelType = {
   effects: {
     *updateComponetData({ payload }, { put, select }) {
       const componentData: componentDataProps[] = yield select(
-        (state: { toolBarEditData: { componentData: componentDataProps[] } }) => state.toolBarEditData.componentData,
-        );
-        const newList = [payload || [], ...componentData]
+        (state: { toolBarEditData: { componentData: componentDataProps[] } }) =>
+          state.toolBarEditData.componentData,
+      );
+      const newList = [payload || [], ...componentData];
       yield put({
         type: 'save',
         payload: {
@@ -36,6 +42,24 @@ const Model: ModelType = {
         },
       });
       message.success('添加成功~');
+    },
+
+    *setClickComponentStatus({ payload }, { put }) {
+      yield put({
+        type: 'save',
+        payload: {
+          isClickComponent: payload,
+        },
+      });
+    },
+
+    *setCurComponent({ payload }, { put }) {
+      yield put({
+        type: 'save',
+        payload: {
+          curComponent: payload,
+        },
+      });
     },
   },
 

@@ -1,0 +1,39 @@
+@primary-bule: #1890ff;
+
+.shapeContainer {
+  position: absolute;
+  & > :hover {
+    cursor: move;
+  }
+  .rotateIcon {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    color: @primary-bule;
+    font-weight: 600;
+    font-size: 20px;
+    transform: translateX(-50%);
+    cursor: grab;
+  
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+.shapeContainerActive {
+  outline: 1px solid @primary-bule;
+  user-select: none;
+}
+
+
+
+.shapePoint {
+  position: absolute;
+  z-index: 1;
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border: 1px solid @primary-bule;
+  border-radius: 50%;
+}
