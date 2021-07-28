@@ -37,7 +37,6 @@ const Model: ModelType = {
         (state: { toolBarEditData: { componentData: componentDataProps[] } }) =>
           state.toolBarEditData.componentData,
       );
-
       const newList = [payload || [], ...componentData];
       yield put({
         type: 'save',
